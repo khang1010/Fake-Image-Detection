@@ -54,18 +54,16 @@ const HomePage = () => {
     let model;
     switch (option) {
       case 'Option 1':
-        model = await tf.loadLayersModel(
-          '/src/model/model_test/model.json'
-        );
+        model = await tf.loadLayersModel('/model/model_test/model.json');
         break;
       case 'Option 2':
-        model = await tf.loadLayersModel('../model/model_test/model.json');
+        model = await tf.loadLayersModel('/model/model_test/model.json');
         break;
       case 'Option 3':
-        model = await tf.loadLayersModel('/src/model/model_test/model.json');
+        model = await tf.loadLayersModel('/model/model_test/model.json');
         break;
       default:
-        model = await tf.loadLayersModel('/src/model/model_test/model.json');
+        model = await tf.loadLayersModel('/model/model_test/model.json');
         break;
     }
     // console.log(model.summary());
