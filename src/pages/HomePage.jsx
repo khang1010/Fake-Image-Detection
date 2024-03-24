@@ -55,23 +55,17 @@ const HomePage = () => {
     switch (option) {
       case 'Option 1':
         model = await tf.loadLayersModel(
-          '../assets/model/model_test/model.json'
+          'https://raw.githubusercontent.com/khang1010/Fake-Image-Detection/master/src/assets/model/model_test/model.json'
         );
         break;
       case 'Option 2':
-        model = await tf.loadLayersModel(
-          '../assets/model/model_test/model.json'
-        );
+        model = await tf.loadLayersModel('https://fid.khangdev.id.vn/src/model/model_test/model.json');
         break;
       case 'Option 3':
-        model = await tf.loadLayersModel(
-          '../assets/model/model_test/model.json'
-        );
+        model = await tf.loadLayersModel('../model/model_test/model.json');
         break;
       default:
-        model = await tf.loadLayersModel(
-          '../assets/model/model_test/model.json'
-        );
+        model = await tf.loadLayersModel('../model/model_test/model.json');
         break;
     }
     // console.log(model.summary());
