@@ -55,7 +55,7 @@ const HomePage = () => {
     switch (option) {
       case 'Option 1':
         model = await tf.loadLayersModel(
-          'https://raw.githubusercontent.com/khang1010/Fake-Image-Detection/master/src/assets/model/model_test/model.json'
+          '/src/model/model_test/model.json'
         );
         break;
       case 'Option 2':
