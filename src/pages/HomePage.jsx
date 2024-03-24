@@ -55,22 +55,22 @@ const HomePage = () => {
     switch (option) {
       case 'Option 1':
         model = await tf.loadLayersModel(
-          'http://localhost:5173/src/assets/model/model_test/model.json'
+          'https://fid.khangdev.id.vn/src/assets/model/model_test/model.json'
         );
         break;
       case 'Option 2':
         model = await tf.loadLayersModel(
-          'http://localhost:5173/src/assets/model/model_test/model.json'
+          'https://fid.khangdev.id.vn/src/assets/model/model_test/model.json'
         );
         break;
       case 'Option 3':
         model = await tf.loadLayersModel(
-          'http://localhost:5173/src/assets/model/model_test/model.json'
+          'https://fid.khangdev.id.vn/src/assets/model/model_test/model.json'
         );
         break;
       default:
         model = await tf.loadLayersModel(
-          'http://localhost:5173/src/assets/model/model_test/model.json'
+          'https://fid.khangdev.id.vn/src/assets/model/model_test/model.json'
         );
         break;
     }
