@@ -59,7 +59,7 @@ const HomePage = () => {
         );
         break;
       case 'Option 2':
-        model = await tf.loadLayersModel('/src/model/model_test/model.json');
+        model = await tf.loadLayersModel('../model/model_test/model.json');
         break;
       case 'Option 3':
         model = await tf.loadLayersModel('/src/model/model_test/model.json');
