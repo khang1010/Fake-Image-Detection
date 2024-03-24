@@ -14,6 +14,7 @@ import * as tf from '@tensorflow/tfjs';
 const HomePage = () => {
   const [image, setImage] = useState(null);
   const [output, setOutput] = useState(null);
+  const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const handleImageChange = (event) => {
@@ -31,6 +32,7 @@ const HomePage = () => {
     setErrorMessage(null);
     const prediction = await checkImage(image, option);
     console.log(prediction.dataSync()[0]);
+    setResult(`Độ chân thật: ${(prediction.dataSync()[0] * 100).toFixed(2)}%`);
     prediction.dataSync()[0] > 0.5
       ? setOutput(`Kết quả kiểm tra: Ảnh thật`)
       : setOutput(`Kết quả kiểm tra: Ảnh giả`);
@@ -54,16 +56,16 @@ const HomePage = () => {
     let model;
     switch (option) {
       case 'Option 1':
-        model = await tf.loadLayersModel('/model/model_test/model.json');
+        model = await tf.loadLayersModel('/models/model_test/model.json');
         break;
       case 'Option 2':
-        model = await tf.loadLayersModel('/model/model_test/model.json');
+        model = await tf.loadLayersModel('/models/model_test/model.json');
         break;
       case 'Option 3':
-        model = await tf.loadLayersModel('/model/model_test/model.json');
+        model = await tf.loadLayersModel('/models/model_test/model.json');
         break;
       default:
-        model = await tf.loadLayersModel('/model/model_test/model.json');
+        model = await tf.loadLayersModel('/models/model_test/model.json');
         break;
     }
     // console.log(model.summary());
@@ -126,6 +128,7 @@ const HomePage = () => {
           <div>
             <h4>Check result:</h4>
             <p>{output}</p>
+            <p>{result}</p>
             <Dropdown>
               <Dropdown.Toggle variant='primary' id='dropdown-basic'>
                 Check
