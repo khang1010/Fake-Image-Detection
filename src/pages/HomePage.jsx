@@ -59,7 +59,7 @@ const HomePage = () => {
         model = await tf.loadLayersModel('/models/model_test/model.json');
         break;
       case 'Option 2':
-        model = await tf.loadLayersModel('/models/model_test/model.json');
+        model = await tf.loadLayersModel('/models/cnn51/model.json');
         break;
       case 'Option 3':
         model = await tf.loadLayersModel('/models/model_test/model.json');
@@ -139,7 +139,7 @@ const HomePage = () => {
                   CNN
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => handleFakeImageCheck('Option 2')}>
-                  MobileNet
+                  CNN51
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => handleFakeImageCheck('Option 3')}>
                   ...
