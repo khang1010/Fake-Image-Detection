@@ -10,7 +10,6 @@ import {
   Dropdown,
 } from 'react-bootstrap';
 import * as tf from '@tensorflow/tfjs';
-import predict from './../../../../../HK4/DA1/EIC/src/api/predict';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPrediction } from '../redux/prediction/predictionSlice';
 
