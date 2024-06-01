@@ -11,6 +11,8 @@ import {
 } from 'react-bootstrap';
 import * as tf from '@tensorflow/tfjs';
 import predict from './../../../../../HK4/DA1/EIC/src/api/predict';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPrediction } from '../redux/prediction/predictionSlice';
 
 const HomePage = () => {
   const [image, setImage] = useState(null);
@@ -18,9 +20,13 @@ const HomePage = () => {
   const [result, setResult] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const dispatch = useDispatch();
+  const predict = useSelector((state) => state.prediction);
+  const [imageBase, setImageBase] = useState(null);
 
   const handleImageChange = (event) => {
     const selectedImage = event.target.files[0];
+    setImageBase(selectedImage);
     setImage(URL.createObjectURL(selectedImage));
     setErrorMessage(null);
   };
@@ -34,11 +40,53 @@ const HomePage = () => {
     setErrorMessage(null);
     const predict = await checkImage(image, option);
     console.log(predict.dataSync());
-    setPrediction(predict);
+    setPrediction(predict.dataSync()[0]);
     prediction.dataSync()[0] > 0.5
       ? setOutput(`Kết quả kiểm tra: Ảnh thật`)
       : setOutput(`Kết quả kiểm tra: Ảnh giả`);
   };
+
+  const handleImageChange2 = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePredict = async () => {
+    try {
+      const imageBase64 = await handleImageBase64(imageBase);
+      if (imageBase64) {
+        const base64Image = imageBase64.split(',')[1];
+        dispatch(fetchPrediction(base64Image));
+      }
+    } catch (error) {
+      console.error("Error processing image:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (predict.status === 'succeeded' && predict.data) {
+      const result = predict.data[0].score < predict.data[1].score ? `Kết quả kiểm tra: ${predict.data[1].label}` : `Kết quả kiểm tra: ${predict.data[0].label}`;
+      setOutput(result);
+      setPrediction(predict.data[1].score);
+    } else if (predict.status === 'failed') {
+      setErrorMessage(`Error: ${predict.error}`);
+    }
+  }, [predict]);
 
   // Function to preprocess the image
   function preprocessImage(image) {
@@ -130,7 +178,7 @@ const HomePage = () => {
           <div>
             <h4>Check result:</h4>
             <p>{output}</p>
-            <p>{prediction ? `Độ chân thật: ${(prediction.dataSync()[0] * 100).toFixed(2)}%`: ''}</p>
+            <p>{prediction ? `Độ chân thật: ${(prediction * 100).toFixed(2)}%`: ''}</p>
             <Dropdown>
               <Dropdown.Toggle variant='primary' id='dropdown-basic'>
                 Check
@@ -143,8 +191,8 @@ const HomePage = () => {
                 <Dropdown.Item onClick={() => handleFakeImageCheck('Option 2')}>
                   CNN51
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleFakeImageCheck('Option 3')}>
-                  ...
+                <Dropdown.Item onClick={handlePredict}>
+                  ViT
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
