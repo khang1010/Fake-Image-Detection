@@ -7,10 +7,25 @@ const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
 // Thunk để gọi API của Hugging Face
 export const fetchPrediction = createAsyncThunk(
   'prediction/fetchPrediction',
-  async (imageBase64, thunkAPI) => {
+  async ({imageBase64, model}, thunkAPI) => {
     try {
+      let api = '';
+      switch(model) {
+        case 'cifake':
+          api = 'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
+          break;
+        case 'imagenet':
+          api = 'https://api-inference.huggingface.co/models/ongtrandong2/Imagenet_ai_vs_real_image_detection';
+          break;
+        case 'progan':
+          api = 'https://api-inference.huggingface.co/models/ongtrandong2/progan_ai_vs_real_image_detection';
+          break;
+        default:
+          api = 'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
+          break;
+      }
       const response = await axios.post(
-        'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection',
+        api,
         { inputs: imageBase64 },
         {
           headers: {

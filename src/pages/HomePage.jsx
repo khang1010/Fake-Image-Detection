@@ -38,9 +38,10 @@ const HomePage = () => {
 
     setErrorMessage(null);
     const predict = await checkImage(image, option);
-    console.log(predict.dataSync());
-    setPrediction(predict.dataSync()[0]);
-    prediction.dataSync()[0] > 0.5
+    console.log(predict.dataSync()[0]);
+    const result = parseFloat(predict.dataSync()[0]);
+    setPrediction(result);
+    result > 0.5
       ? setOutput(`Kết quả kiểm tra: Ảnh thật`)
       : setOutput(`Kết quả kiểm tra: Ảnh giả`);
   };
@@ -65,12 +66,40 @@ const HomePage = () => {
     });
   };
 
-  const handlePredict = async () => {
+  const resizeImage = (imageBase64, callback) => {
+    const img = new Image();
+    img.src = imageBase64;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 32;
+      canvas.height = 32;
+      ctx.drawImage(img, 0, 0, 32, 32);
+      const resizedImageBase64 = canvas.toDataURL('image/jpeg');
+      callback(resizedImageBase64);
+    };
+  };
+
+  // const handlePredict = async () => {
+  //   try {
+  //     const imageBase64 = await handleImageBase64(imageBase);
+  //     if (imageBase64) {
+  //       const base64Image = imageBase64.split(',')[1];
+  //       dispatch(fetchPrediction(base64Image));
+  //     }
+  //   } catch (error) {
+  //     console.error("Error processing image:", error);
+  //   }
+  // };
+
+  const handlePredict = async (model) => {
     try {
       const imageBase64 = await handleImageBase64(imageBase);
       if (imageBase64) {
-        const base64Image = imageBase64.split(',')[1];
-        dispatch(fetchPrediction(base64Image));
+        resizeImage(imageBase64, (resizedImageBase64) => {
+          const base64Image = resizedImageBase64.split(',')[1];
+          dispatch(fetchPrediction({base64Image, model}));
+        });
       }
     } catch (error) {
       console.error("Error processing image:", error);
@@ -138,13 +167,13 @@ const HomePage = () => {
         className='mb-4 d-flex justify-content-between align-items-center'
         style={{ padding: '10px' }}
       >
-        <Navbar.Brand href='#'>Home</Navbar.Brand>
+        <Navbar.Brand href='#'>Trang chủ</Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mr-auto'>
-            <Nav.Link href='#'>Setting</Nav.Link>
-            <Nav.Link href='#'>Information</Nav.Link>
-            <Nav.Link href='#'>About</Nav.Link>
+            <Nav.Link href='#'>Cài đặt</Nav.Link>
+            <Nav.Link href='#'>Thông tin</Nav.Link>
+            {/* <Nav.Link href='#'>About</Nav.Link> */}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -154,7 +183,7 @@ const HomePage = () => {
           className='d-flex flex-column justify-content-center align-items-center'
         >
           <Form.Group style={{ padding: '5px' }}>
-            <Form.Label>Choose image</Form.Label>
+            {/* <Form.Label>Chọn ảnh</Form.Label> */}
             <Form.Control
               type='file'
               accept='image/*'
@@ -175,23 +204,26 @@ const HomePage = () => {
 
         <Col md={6}>
           <div>
-            <h4>Check result:</h4>
+            <h4>Kết quả dự đoán:</h4>
             <p>{output}</p>
             <p>{prediction ? `Độ chân thật: ${(prediction * 100).toFixed(2)}%`: ''}</p>
             <Dropdown>
               <Dropdown.Toggle variant='primary' id='dropdown-basic'>
-                Check
+                Chọn mô hình và dự đoán
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleFakeImageCheck('Option 1')}>
-                  CNN
+                <Dropdown.Item onClick={() => handlePredict('imagenet')}>
+                  ViT - ImageNet_VQDM
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => handlePredict('cifake')}>
+                  ViT - CIFAKE
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => handlePredict('progan')}>
+                  ViT - ProGAN
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => handleFakeImageCheck('Option 2')}>
-                  CNN51
-                </Dropdown.Item>
-                <Dropdown.Item onClick={handlePredict}>
-                  ViT
+                  CNN
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
