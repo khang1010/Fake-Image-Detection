@@ -1,4 +1,3 @@
-// predictionSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -7,21 +6,25 @@ const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
 // Thunk để gọi API của Hugging Face
 export const fetchPrediction = createAsyncThunk(
   'prediction/fetchPrediction',
-  async ({imageBase64, model}, thunkAPI) => {
+  async ({ imageBase64, model }, thunkAPI) => {
     try {
       let api = '';
-      switch(model) {
+      switch (model) {
         case 'cifake':
-          api = 'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
+          api =
+            'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
           break;
         case 'imagenet':
-          api = 'https://api-inference.huggingface.co/models/ongtrandong2/Imagenet_ai_vs_real_image_detection';
+          api =
+            'https://api-inference.huggingface.co/models/ongtrandong2/progan_ai_vs_real_image_detection';
           break;
         case 'progan':
-          api = 'https://api-inference.huggingface.co/models/ongtrandong2/progan_ai_vs_real_image_detection';
+          api =
+            'https://api-inference.huggingface.co/models/ongtrandong2/progan_ai_vs_real_image_detection';
           break;
         default:
-          api = 'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
+          api =
+            'https://api-inference.huggingface.co/models/ongtrandong2/ai_vs_real_image_detection';
           break;
       }
       const response = await axios.post(
@@ -34,13 +37,19 @@ export const fetchPrediction = createAsyncThunk(
           },
         }
       );
-      if (response.data.error && response.data.error.includes('currently loading')) {
-        throw new Error('Model is currently loading. Please try again in a few moments.');
+      if (response.data.error) {
+        if (response.data.error.includes('currently loading')) {
+          throw new Error(
+            'Model is currently loading. Please try again in a few moments.'
+          );
+        } else if (response.data.error.includes('Invalid image')) {
+          throw new Error(
+            'Invalid image format. Please try again with a valid image.'
+          );
+        }
       }
-      console.log(response.data);
       return response.data;
     } catch (error) {
-        console.log(error.message);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
